@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Роман Колесников — GRAND CARTEL</title>
+<style>
+  :root{
+    --bg:#050805;
+    --lime:#aebe4f;
+    --lime-soft:#9fb04a;
+    --green-deep:#0d2414;
+    --white:#ffffff;
+    --muted:#cfd9c2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;background:#000;font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;overflow:hidden;}
+  .deck{position:relative;width:100vw;height:100vh;}
+
+  .slide{
+    position:absolute;inset:0;
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    padding:6vh 8vw;
+    background:
+      linear-gradient(115deg, rgba(40,90,45,.0) 30%, rgba(80,150,80,.10) 48%, rgba(40,90,45,.0) 60%),
+      radial-gradient(120% 90% at 75% 40%, #0b1a0d 0%, #060a06 55%, #020302 100%);
+    color:var(--white);
+    overflow:hidden;
+  }
+  .slide.active{display:flex;animation:fade .45s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  /* diagonal light streaks */
+  .slide::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      linear-gradient(118deg, transparent 38%, rgba(150,200,140,.07) 41%, transparent 43%),
+      linear-gradient(118deg, transparent 52%, rgba(150,200,140,.05) 54%, transparent 56%);
+  }
+
+  /* footer wordmark */
+  .wordmark{
+    position:absolute;left:0;right:0;bottom:2.5vh;
+    text-align:center;
+    font-weight:900;
+    font-size:clamp(26px,7.6vw,150px);
+    letter-spacing:.03em;
+    color:var(--lime);
+    opacity:.92;
+    line-height:.9;
+    font-family:"Arial Black","Arial Narrow",Impact,sans-serif;
+    text-transform:uppercase;
+    white-space:nowrap;
+    user-select:none;
+  }
+  .wordmark.dim{opacity:.85;}
+
+  /* section tag top-right */
+  .sectiontag{
+    position:absolute;top:5vh;right:8vw;
+    font-size:clamp(14px,1.4vw,22px);
+    color:var(--white);
+    font-weight:600;
+    letter-spacing:.02em;
+  }
+  .sectiontag.lime{color:var(--lime);}
+
+  h1.title{
+    font-size:clamp(40px,7vw,110px);
+    font-weight:800;
+    line-height:1.0;
+    margin-bottom:.15em;
+  }
+  h2.head{
+    font-size:clamp(26px,3.6vw,56px);
+    font-weight:800;
+    margin-bottom:.5em;
+  }
+  h2.head.serif{font-weight:800;}
+
+  /* divider slide big heading */
+  .divider h1{
+    font-size:clamp(44px,8vw,120px);
+    font-weight:800;
+    max-width:55%;
+    line-height:1.0;
+  }
+
+  .subq{color:var(--lime);font-weight:700;font-size:clamp(14px,1.5vw,22px);line-height:1.7;margin-bottom:1.1em;}
+  .subq div{margin-bottom:.1em;}
+
+  .body{
+    position:relative;
+    max-width:62%;
+    font-size:clamp(15px,1.55vw,24px);
+    line-height:1.5;
+    color:var(--muted);
+    padding-left:90px;
+  }
+  .body::before{
+    content:"";position:absolute;left:0;top:.55em;
+    width:62px;height:7px;background:var(--lime);border-radius:2px;
+  }
+  .body p{margin-bottom:.85em;}
+  .body p:last-child{margin-bottom:0;}
+  .body b,.body strong{color:#fff;}
+
+  /* title block left */
+  .titleblock{max-width:55%;}
+  .titleblock .meta{color:var(--lime);font-size:clamp(22px,3vw,46px);font-weight:600;margin-bottom:1.4em;line-height:1.1;}
+  .titleblock .brand{font-size:clamp(20px,2.2vw,34px);font-weight:800;color:#fff;margin-top:.2em;}
+  .titleblock .niche{font-size:clamp(15px,1.6vw,24px);color:var(--muted);margin-top:.4em;line-height:1.45;}
+  .titleblock .site{font-size:clamp(14px,1.5vw,22px);color:var(--muted);margin-top:.5em;}
+  .titleblock .site a,.titleblock .site span.slot{color:var(--lime);text-decoration:none;}
+
+  /* logo badge for title */
+  .logobadge{
+    position:absolute;right:8vw;top:50%;transform:translateY(-60%);
+    width:min(34vw,560px);aspect-ratio:16/9;
+    background:#fff;border:5px solid #1c3a8a;border-radius:28px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 60px rgba(120,200,120,.12);
+  }
+  .logobadge .lg{font-family:"Arial Black",Impact,sans-serif;font-weight:900;font-size:clamp(40px,7vw,120px);color:#0c5a2a;letter-spacing:-.03em;}
+  .logobadge .lg .x{color:#0b2e16;}
+
+  /* two-column lists for dense slides */
+  .cols{display:flex;gap:5%;max-width:78%;padding-left:90px;position:relative;}
+  .cols::before{content:"";position:absolute;left:0;top:.4em;width:62px;height:7px;background:var(--lime);border-radius:2px;}
+  .blocklabel{color:var(--lime);font-weight:800;font-size:clamp(16px,1.7vw,26px);margin:.2em 0 .35em;}
+  ul.kv{list-style:none;font-size:clamp(14px,1.4vw,21px);line-height:1.55;color:var(--muted);}
+  ul.kv li{margin-bottom:.35em;padding-left:1.1em;position:relative;}
+  ul.kv li::before{content:"–";position:absolute;left:0;color:var(--lime);}
+  ul.kv li b{color:#fff;}
+
+  .small .body{font-size:clamp(13px,1.25vw,19px);line-height:1.45;max-width:70%;}
+
+  /* progress badges slide */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1em 3em;max-width:80%;padding-left:90px;position:relative;}
+  .grid::before{content:"";position:absolute;left:0;top:.3em;width:62px;height:7px;background:var(--lime);border-radius:2px;}
+  .grid .item{font-size:clamp(13px,1.35vw,20px);line-height:1.45;color:var(--muted);}
+  .grid .item b{display:block;color:var(--lime);font-weight:800;margin-bottom:.15em;font-size:1.02em;}
+
+  .note{position:absolute;bottom:1vh;left:8vw;font-size:12px;color:#5a6a52;}
+
+  /* portfolio cards */
+  .pf{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2vw;max-width:84vw;margin-top:.4em;}
+  .pf .card{
+    background:linear-gradient(180deg,rgba(174,190,79,.10),rgba(10,20,10,.35));
+    border:1px solid rgba(174,190,79,.25);border-top:4px solid var(--lime);
+    border-radius:14px;padding:1.1em 1em;display:flex;flex-direction:column;min-height:40vh;
+  }
+  .pf .card .pname{font-weight:800;color:#fff;font-size:clamp(14px,1.4vw,23px);line-height:1.05;}
+  .pf .card .ptag{color:var(--lime);font-size:clamp(10px,.92vw,15px);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:.3em 0 .6em;}
+  .pf .card .pdesc{color:var(--muted);font-size:clamp(11px,1.02vw,16px);line-height:1.42;flex:1;}
+  .pf .card .pbar{height:7px;border-radius:4px;background:rgba(255,255,255,.09);overflow:hidden;margin-top:.7em;}
+  .pf .card .pbar span{display:block;height:100%;background:var(--lime);border-radius:4px;}
+  .pf .card .pmetric{color:var(--lime);font-weight:800;font-size:clamp(11px,1vw,15px);margin-top:.45em;}
+
+  /* nav */
+  .counter{position:absolute;bottom:2vh;right:2vw;font-size:13px;color:#6a7a5e;z-index:20;}
+  .hint{position:absolute;bottom:2vh;left:2vw;font-size:12px;color:#445040;z-index:20;}
+  .navbtn{position:absolute;top:0;height:100%;width:12%;z-index:15;cursor:pointer;background:transparent;border:0;}
+  .navbtn.left{left:0;} .navbtn.right{right:0;}
+
+  /* ---------- АДАПТИВ ---------- */
+  /* широкие, но не максимальные окна — портфолио в 3 колонки */
+  @media (max-width:1280px){
+    .pf{grid-template-columns:repeat(3,1fr);}
+    .pf .card{min-height:auto;}
+  }
+
+  /* средние окна / вертикальные — реколонка, скролл вместо обрезки */
+  @media (max-width:1000px){
+    .slide{justify-content:flex-start;overflow-y:auto;padding:5vh 6vw 14vh;}
+    .body,.cols,.grid,.pf{max-width:100%;padding-left:48px;}
+    .body::before,.cols::before,.grid::before{width:34px;height:5px;}
+    .titleblock{max-width:100%;}
+    .logobadge{position:static;transform:none;width:min(62vw,380px);margin-top:1.4em;}
+    .divider h1{max-width:100%;}
+    .grid{grid-template-columns:1fr;}
+    .pf{grid-template-columns:repeat(2,1fr);}
+    .cols{flex-wrap:wrap;}
+    .cols>div{flex:1 1 100% !important;margin-bottom:.6em;}
+    /* вордмарк в поток, чтобы не уезжал за скролл */
+    .slide{padding-bottom:6vh;}
+    .wordmark{position:static;bottom:auto;left:auto;right:auto;margin-top:auto;padding-top:1.2em;white-space:normal;}
+  }
+
+  /* узкие окна — всё в одну колонку */
+  @media (max-width:620px){
+    .pf{grid-template-columns:1fr;}
+    .body,.cols,.grid,.pf{padding-left:34px;}
+    .body::before,.cols::before,.grid::before{display:none;}
+    .body,.cols,.grid,.pf{padding-left:0;}
+    .wordmark{font-size:clamp(28px,12vw,80px);}
+  }
+
+  /* низкие окна (по высоте) — поджать вертикальные отступы */
+  @media (max-height:620px){
+    .slide{justify-content:flex-start;overflow-y:auto;padding:4vh 8vw 6vh;}
+    .pf .card{min-height:auto;}
+    .wordmark{position:static;bottom:auto;left:auto;right:auto;margin-top:auto;padding-top:1em;white-space:normal;}
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide active">
+    <div class="titleblock">
+      <h1 class="title">Роман Колесников</h1>
+      <div class="meta">39 лет, г. Москва<br>(родом из Благовещенска)</div>
+      <div class="brand">Парк ДОСТАВЬ-КА</div>
+      <div class="niche">Ниша: виртуальная диспетчерская по подключению курьеров к сервисам Яндекс Доставки</div>
+      <div class="site">Сайт / Соц.сети: <span class="slot">site.ru</span></div>
+    </div>
+    <div class="logobadge"><div class="lg"><span class="x">X</span>АТ</div></div>
+    <div class="wordmark">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 2 О СЕБЕ -->
+  <section class="slide">
+    <div class="sectiontag">О себе</div>
+    <h2 class="head">О себе</h2>
+    <div class="body">
+      <p>Предприниматель, никогда не работал в найме. Родился в Благовещенске, окончил ДальГАУ.</p>
+      <p>Во время университета начал челночный бизнес с Китаем — более <b>3000 пересечений границы</b>.</p>
+      <p>Запускал проекты в разных нишах: торговля, услуги, онлайн-сервисы. В ковид запустили IT-проект (кэшбэк-сервис).</p>
+      <p>В 2023 году переехал в Москву для развития новых проектов.</p>
+      <p>Женат, многодетный отец, занимаюсь спортом.</p>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 3 ЛИЧНЫЙ ПУТЬ -->
+  <section class="slide small">
+    <div class="sectiontag">О себе</div>
+    <h2 class="head">Ваш личный путь</h2>
+    <div class="body">
+      <p>С <b>2007</b> начал зарабатывать на доставке товаров из Китая — выстроил систему работы и большую агентскую сеть. Опыт работы в условиях многозадачности и неопределённости.</p>
+      <p>В <b>2013</b> открыл клининговую компанию (химчистка мебели, ковров, матрасов, штор на объекте клиента), зарегистрировал ИП. Закрыл в 2020-м — не было роста.</p>
+      <p>Параллельно вёл несколько направлений с минимальным участием: офлайн-магазин чая/кофе/сувениров, интернет-магазины китайских товаров, прокат электро- и строительного инструмента, вертикальная печать на стенах, SMM-агентство, интернет-трафик, консалтинг.</p>
+      <p>В <b>2020</b> с партнёрами запустил IT-проект — кэшбэк-платформу с прицелом на маркетплейс и собственную CRM. Дошли до <b>20K юзеров</b> и тысячи подключённых организаций. Лично провёл <b>1000+ встреч</b> с предпринимателями (кастдев → презентация → продажа). Из проекта вышел.</p>
+      <p>В <b>2024</b> занялся автоарендой — на пике 30 машин. Зафиксировал убыток ~5 млн и вышел. Сопутствующей историей осталась онлайн-диспетчерская Яндекс — <b>сегодня это основной фокус</b>.</p>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 4 ПОЧЕМУ -->
+  <section class="slide">
+    <div class="sectiontag white">О себе</div>
+    <h2 class="head">Почему вы занимаетесь этим бизнесом?</h2>
+    <div class="body">
+      <p>Случайно попал в сферу автоаренды после переезда — важно было быстро запустить новый источник дохода.</p>
+      <p>Мне интересно превращать активы и процессы в системный денежный поток.</p>
+      <p>Сейчас проект решает две задачи:<br>• закрытие базовых финансовых потребностей<br>• освобождение времени и ресурсов для более масштабных проектов.</p>
+      <p>Модель относительно простая: минимальная операционная нагрузка, небольшая команда. Ключевая задача — организация стабильного потока трафика и удержание курьеров.</p>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 5 ГЛАВНЫЙ УСПЕХ/ВЫЗОВ (восстановлен) -->
+  <section class="slide small">
+    <div class="sectiontag">О себе</div>
+    <h2 class="head">Главный успех или вызов, который вас сформировал</h2>
+    <div class="body">
+      <p>Первый закал — <b>челночный бизнес с Китаем</b>: более 3000 пересечений границы, агентская сеть, постоянная многозадачность и неопределённость. Научился запускать процессы с нуля и держать их в хаосе.</p>
+      <p>Главная школа продаж — IT-проект: <b>1000+ личных встреч</b> с предпринимателями. Это дало огромную насмотренность — кто и как строит бизнес, где он ломается.</p>
+      <p>Самый тяжёлый вызов — <b>автоаренда</b>: вырос до 30 машин, но это оказался «кровавый» бизнес. Выгорел, зафиксировал убыток ~5 млн и вышел — вовремя признать ошибку и не тонуть в проекте оказалось важнее гордости.</p>
+      <p>Из этой истории и родился нынешний фокус — парк ДОСТАВЬ-КА: та же инфраструктура, но кратно легче в операционке.</p>
+    </div>
+    <div class="note">*Слайд восстановлен из биографии — в старой презе он дублировал предыдущий. Поправь под себя.</div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 6 DIVIDER О БИЗНЕСЕ -->
+  <section class="slide divider">
+    <h1>О бизнесе</h1>
+    <div class="wordmark">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 7 СФЕРА -->
+  <section class="slide">
+    <div class="sectiontag white">О бизнесе</div>
+    <h2 class="head">Сфера деятельности</h2>
+    <div class="subq">
+      <div>– Чем занимается ваша компания?</div>
+      <div>– Кто ваш клиент?</div>
+      <div>– Основной продукт или услуга</div>
+    </div>
+    <div class="body">
+      <p><b>Онлайн-парк курьеров в экосистеме Яндекс Доставки.</b></p>
+      <p>Мы занимаемся:<br>• привлечением и подключением курьеров<br>• сопровождением и поддержкой работы в системе<br>• развитием сообщества и реферальной сети</p>
+      <p>Клиенты: курьеры (пешие, вело, авто, грузовые), работающие в сервисах Яндекс Доставки.</p>
+      <p>Модель дохода: комиссия парка с выполненных заказов курьеров.</p>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 8 КЛЮЧЕВЫЕ ПОКАЗАТЕЛИ -->
+  <section class="slide">
+    <div class="sectiontag white">О бизнесе</div>
+    <h2 class="head">Ключевые показатели</h2>
+    <div class="grid">
+      <div class="item"><b>≈ 65 млн ₽</b>Оборот заказов через парк (2025)</div>
+      <div class="item"><b>≈ 2,6 млн ₽</b>Прибыль проекта за 2025</div>
+      <div class="item"><b>30 → 120 курьеров</b>Рост за 4 месяца (с октября)</div>
+      <div class="item"><b>80 активных</b>Сейчас (просадка из-за перевода на СМЗ)</div>
+      <div class="item"><b>до 10–12 тыс ₽ / мес</b>Доход парка с одного активного курьера</div>
+      <div class="item"><b>Команда — 3 человека</b>Разработчик (бот+CRM), директолог+сайт, ассистент (операционка)</div>
+      <div class="item"><b>Ближайшая цель — 300</b>Активных курьеров</div>
+      <div class="item"><b>Цель на 12 мес — 1000+</b>Активных курьеров → 1+ млн ₽ прибыли в месяц</div>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 9 DIVIDER ВЫЗОВЫ -->
+  <section class="slide divider">
+    <h1>Текущие вызовы</h1>
+    <div class="wordmark">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 10 ВЫЗОВЫ КОНТЕНТ -->
+  <section class="slide">
+    <div class="sectiontag white">Текущие вызовы</div>
+    <h2 class="head">Главные вызовы бизнеса</h2>
+    <div class="subq">
+      <div>– Что сейчас тормозит рост?</div>
+      <div>– Какие задачи хотите решить в ближайшее время?</div>
+    </div>
+    <div class="body">
+      <p><b>Ужесточение налоговой политики и контроля</b> в сфере курьерских парков.</p>
+      <p>Основные ограничения:<br>• обязательный налоговый статус курьеров (СМЗ / ИП / Патент — не более 10%)<br>• риск налоговых доначислений за прошлые периоды и штрафов за подмену трудовых отношений</p>
+      <p>Следствие: возможное сокращение части курьеров и временная просадка роста.</p>
+      <p>Отрасль проходит этап регулирования. Основная задача — <b>перестроить модель работы парка под новые требования и сохранить темпы роста</b>.</p>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 11 DIVIDER ЖДУ -->
+  <section class="slide divider">
+    <h1>Чего я жду<br>от десятки</h1>
+    <div class="wordmark">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 12 ЖДУ КОНТЕНТ -->
+  <section class="slide small">
+    <div class="sectiontag white">Чего я жду от десятки</div>
+    <h2 class="head">Чего я жду от десятки</h2>
+    <div class="body">
+      <p>Основной запрос — <b>кратное масштабирование и повышение прибыльности</b> парка курьеров.</p>
+      <p>Интересно обсудить:<br>• построение системной лидогенерации курьеров<br>• эффективные каналы привлечения трафика<br>• выстраивание воронки подключения и CRM-процессов<br>• автоматизацию операционных задач</p>
+      <p>Также интересны идеи:<br>• монетизации курьерской аудитории<br>• поиска смежных ниш в логистике и доставке<br>• стратегий роста до 300 → 1000 → 5000 активных курьеров</p>
+      <p>Отдельная задача — ускорить рост прибыли проекта для закрытия текущих обязательств.</p>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 13 DIVIDER ПОЛЕЗЕН -->
+  <section class="slide divider">
+    <h1>Чем я буду<br>полезен в десятке</h1>
+    <div class="wordmark">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 14 ПОЛЕЗЕН КОНТЕНТ -->
+  <section class="slide small">
+    <div class="sectiontag white">Чем я могу быть полезен</div>
+    <h2 class="head">Чем я могу быть полезен десятке</h2>
+    <div class="body">
+      <p><b>Большая насмотренность в бизнесе</b> — тысяча встреч с предпринимателями, понимание типичных ошибок и слабых мест проектов.</p>
+      <p><b>Свежий взгляд со стороны</b> — в чужом бизнесе проще увидеть проблему, точку роста или неэффективность.</p>
+      <p><b>Связи и опыт работы с Китаем</b> — поиск товаров, производство, логистика, доставка, таможня.</p>
+      <p><b>Интерес к крипторынку</b> — делюсь наблюдениями и идеями.</p>
+      <p><b>Нетворк и нестандартные решения</b> — контакты, помощь в поиске ресурсов и партнёров в сложных ситуациях.</p>
+      <p>Люблю разбираться в системах и находить, где в них спрятаны деньги. И всегда на позитиве — лёгкий на подъём, импровизирую по ситуации.</p>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 15 ПОРТФОЛИО — КРУПНЫМИ МАЗКАМИ (драфт) -->
+  <section class="slide">
+    <div class="sectiontag lime">Что построили</div>
+    <h2 class="head" style="margin-bottom:.25em;">Крупными мазками — AI-фабрика проектов</h2>
+    <div class="pf">
+      <div class="card">
+        <div class="pname">ДОСТАВЬ-КА</div>
+        <div class="ptag">AI-парк курьеров</div>
+        <div class="pdesc">Автоонбординг (OCR паспорт/ВУ/СТС), голосовой робот-обзвон, бот курьеров, регистрация в Яндекс.Флит через API.</div>
+        <div class="pbar"><span style="width:85%"></span></div>
+        <div class="pmetric">30 → 120 курьеров · eval 38/38</div>
+      </div>
+      <div class="card">
+        <div class="pname">Торговый бот</div>
+        <div class="ptag">Алготрейдинг</div>
+        <div class="pdesc">Разработка стратегий, бэктесты, live-исполнение и разбор edge по реальным сделкам.</div>
+        <div class="pbar"><span style="width:60%"></span></div>
+        <div class="pmetric">88 live-сделок разобрано</div>
+      </div>
+      <div class="card">
+        <div class="pname">Контент-платформа</div>
+        <div class="ptag">ROMKOLA · автопилот</div>
+        <div class="pdesc">Генерация и автопубликация в IG / VK / TikTok / Threads / YouTube. Stories, карусели, Talking Head, Telegram-бот управления.</div>
+        <div class="pbar"><span style="width:90%"></span></div>
+        <div class="pmetric">5+ платформ автономно</div>
+      </div>
+      <div class="card">
+        <div class="pname">VROOM</div>
+        <div class="ptag">IT-стартап автоаренды</div>
+        <div class="pdesc">Сайт, CI/CD, роли (Manager), дизайн-лаб — софт, облегчающий жизнь участникам рынка автоаренды.</div>
+        <div class="pbar"><span style="width:50%"></span></div>
+        <div class="pmetric">MVP · CI зелёный</div>
+      </div>
+      <div class="card">
+        <div class="pname">Авитома</div>
+        <div class="ptag">Авито-автоматизация</div>
+        <div class="pdesc">Автогенерация объявлений (income-first), дашборд аналитики, прозвон и дожим лидов.</div>
+        <div class="pbar"><span style="width:70%"></span></div>
+        <div class="pmetric">дашборд + автопостинг</div>
+      </div>
+    </div>
+    <div class="note">*Обзорный слайд — драфт. Поправь проекты, проценты и метрики под себя.</div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 15b ДОСТАВЬ-КА — ДЕТАЛИ АВТОМАТИЗАЦИИ (драфт) -->
+  <section class="slide">
+    <div class="sectiontag lime">Что построили</div>
+    <h2 class="head">ДОСТАВЬ-КА — что автоматизировали</h2>
+    <div class="grid">
+      <div class="item"><b>AI-агент онбординга</b>Salebot + n8n: приём заявки, OCR паспорта / ВУ / СТС, автосоздание профиля курьера</div>
+      <div class="item"><b>Авто-создание в Яндекс.Флит</b>Регистрация контрактора через API, идемпотентность, обработка дублей и повторов</div>
+      <div class="item"><b>Голосовой робот (realtime)</b>Обзвон новых лидов на русском (OpenAI Realtime) + автодайлер из таблицы лидов</div>
+      <div class="item"><b>Бот курьеров</b>Подключение, поддержка, реферальная программа, розыгрыши, комьюнити 400+</div>
+      <div class="item"><b>Логика СМЗ / статусов</b>Проверка налогового статуса, пропуск уже подключённых, дедупликация звонков</div>
+      <div class="item"><b>Качество и контроль</b>Eval-сьюит агента 38/38, watchdog тихих сбоев, логирование</div>
+    </div>
+    <div class="note">*Драфт деталей по парку. Поправь формулировки и цифры под себя.</div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 16 ЗАПРОС -->
+  <section class="slide small">
+    <div class="sectiontag white">Запрос</div>
+    <h1 class="title" style="font-size:clamp(34px,5vw,72px);margin-bottom:.3em;">Запрос</h1>
+    <div class="cols">
+      <div style="flex:1.1;">
+        <div class="blocklabel">Контекст</div>
+        <ul class="kv">
+          <li>Парк = платформа подключения и сопровождения курьеров, доход — комиссия с заказов</li>
+          <li><b>~80 активных курьеров</b>, комиссия парка <b>4%</b> от оборота</li>
+          <li>Прибыль за 2025 — <b>≈2,6 млн ₽</b></li>
+          <li>Трафик: Авито, Telegram, контент, тестируем директ</li>
+          <li>Активный рост с октября 2025: 30 → 120</li>
+        </ul>
+      </div>
+      <div style="flex:1;">
+        <div class="blocklabel">Ограничения роста</div>
+        <ul class="kv">
+          <li>нестабильный поток новых курьеров</li>
+          <li>высокая текучка</li>
+          <li>нет масштабируемой системы лидогенерации</li>
+          <li>ужесточение требований по СМЗ / налоговому статусу</li>
+        </ul>
+        <div class="blocklabel" style="margin-top:.7em;">Цель</div>
+        <ul class="kv">
+          <li><b>300</b> активных курьеров — в ближайшее время</li>
+          <li><b>1000</b> активных — в течение года</li>
+          <li>прибыль <b>1+ млн ₽ / месяц</b></li>
+          <li>масштабировать поток курьеров в <b>5–10×</b></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 17 ФАКТУРА -->
+  <section class="slide small">
+    <div class="sectiontag white">Запрос</div>
+    <h2 class="head" style="margin-bottom:.35em;">Фактура</h2>
+    <div class="cols">
+      <div style="flex:1;">
+        <div class="blocklabel">Данные за 6 месяцев</div>
+        <ul class="kv">
+          <li>Подключено курьеров — <b>~1000</b></li>
+          <li>Конверсия в активного — <b>менее 10%</b></li>
+          <li>Доля парковых СМЗ и ИП — <b>47,8%</b> (цель 90% к сентябрю)</li>
+          <li>Отток / архив — <b>1500</b> человек (нет заказов 14+ дней)</li>
+          <li>Рекламный бюджет за всё время — <b>300 000 ₽</b></li>
+        </ul>
+      </div>
+      <div style="flex:1;">
+        <div class="blocklabel">Что предпринималось</div>
+        <ul class="kv">
+          <li>Чат курьеров — <b>400+</b> участников, комьюнити</li>
+          <li>Тесты разных источников трафика на малых бюджетах</li>
+          <li>Бот: автоподключение, поддержка, розыгрыши, рефералка</li>
+          <li>Рассылки по базе (Яндекс, WhatsApp, парковый бот)</li>
+          <li>Контент</li>
+        </ul>
+        <div class="blocklabel" style="margin-top:.6em;">Вопрос к 10-ке</div>
+        <ul class="kv">
+          <li>Как поднять конверсию и снизить отток / текучку?</li>
+          <li>Связки привлечения и удержания, реактивация спящей базы, масштабирование трафика</li>
+        </ul>
+      </div>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <!-- 18 ЗАКЛЮЧЕНИЕ -->
+  <section class="slide">
+    <div class="sectiontag white">Заключение</div>
+    <h2 class="head">Готовность к открытости и работе</h2>
+    <div class="body">
+      <p>Парк ДОСТАВЬ-КА — проект на пересечении логистики, маркетинга и работы с большой аудиторией исполнителей. Есть пересечения с будущим стартапом.</p>
+      <p>Сейчас для меня это не просто бизнес, а площадка для тестирования гипотез, роста и масштабирования модели.</p>
+      <p>Мне интересно:<br>• смотреть на проект глазами опытных предпринимателей<br>• находить нестандартные решения для роста<br>• обсуждать идеи и обмениваться практическим опытом</p>
+      <p>Открыт к честной обратной связи, вопросам и любым конструктивным предложениям.</p>
+    </div>
+    <div class="wordmark dim">GRAND —I— CARTEL</div>
+  </section>
+
+  <button class="navbtn left" id="prevZone" aria-label="prev"></button>
+  <button class="navbtn right" id="nextZone" aria-label="next"></button>
+  <div class="counter" id="counter">1</div>
+  <div class="hint">← → пробел · F — на весь экран</div>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  const counter=document.getElementById('counter');
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    counter.textContent=(i+1)+' / '+slides.length;
+  }
+  function next(){show(i+1);} function prev(){show(i-1);}
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();next();}
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();prev();}
+    else if(e.key==='Home'){show(0);} else if(e.key==='End'){show(slides.length-1);}
+    else if(e.key==='f'||e.key==='F'){
+      if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+  document.getElementById('nextZone').onclick=next;
+  document.getElementById('prevZone').onclick=prev;
+  show(0);
+</script>
+</body>
+</html>
