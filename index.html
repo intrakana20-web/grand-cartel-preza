@@ -202,6 +202,56 @@
     .pf .card{min-height:auto;}
     .wordmark{position:static;bottom:auto;left:auto;right:auto;margin-top:auto;padding-top:1em;white-space:normal;}
   }
+
+  /* ===== DESIGN UPGRADE: depth / glass / 3D ===== */
+  .deck{perspective:1800px;perspective-origin:50% 35%;}
+  .slide.active{animation:enterDeep .65s cubic-bezier(.22,.68,.2,1);}
+  @keyframes enterDeep{
+    from{opacity:0;transform:translateZ(-140px) translateY(18px) rotateX(3deg);filter:blur(4px);}
+    to{opacity:1;transform:none;filter:none;}
+  }
+  .pf .card{
+    background:linear-gradient(160deg,rgba(174,190,79,.10),rgba(255,255,255,.025) 40%,rgba(0,0,0,.18));
+    border:1px solid rgba(255,255,255,.08);border-top:4px solid var(--lime);
+    box-shadow:0 14px 38px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    transform-style:preserve-3d;
+    transition:transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease, border-color .4s ease;
+  }
+  .pf .card:hover{
+    transform:translateY(-6px) rotateX(2deg) rotateY(-1deg);
+    box-shadow:0 24px 56px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.12);
+    border-color:rgba(174,190,79,.35);
+  }
+  .wordmark{
+    background:linear-gradient(90deg,#9fb04a 0%,#dde98e 50%,#9fb04a 100%);
+    background-size:200% 100%;
+    -webkit-background-clip:text;background-clip:text;
+    color:transparent;-webkit-text-fill-color:transparent;
+    animation:shimmer 7s linear infinite;
+  }
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  @keyframes floaty{0%,100%{transform:translateY(-58%)}50%{transform:translateY(-62%)}}
+  .logobadge{animation:floaty 6s ease-in-out infinite;transition:box-shadow .6s ease;}
+  .logobadge:hover{box-shadow:0 30px 90px rgba(255,140,0,.22);}
+  .slide::after{
+    content:"";position:absolute;right:-8%;bottom:-12%;
+    width:55vw;height:55vw;
+    background:radial-gradient(circle at center, rgba(120,200,120,.10) 0%, transparent 60%);
+    filter:blur(40px);pointer-events:none;z-index:0;
+    animation:blobmove 18s ease-in-out infinite alternate;
+  }
+  @keyframes blobmove{0%{transform:translate(0,0)}100%{transform:translate(-6%,4%)}}
+
+  .socials{font-size:clamp(14px,1.55vw,22px);color:var(--muted);margin-top:.55em;line-height:1.7;}
+  .socials a{color:var(--lime);text-decoration:none;border-bottom:1px dashed rgba(174,190,79,.4);transition:color .25s ease,border-color .25s ease;}
+  .socials a:hover{color:#dde98e;border-bottom-color:#dde98e;}
+  .qrs{display:flex;gap:1.2em;margin-top:1em;}
+  .qrs figure{margin:0;text-align:center;}
+  .qrs a{display:block;border-radius:12px;overflow:hidden;transition:transform .35s ease, box-shadow .35s ease;box-shadow:0 6px 16px rgba(0,0,0,.35);}
+  .qrs a:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 14px 30px rgba(174,190,79,.25);}
+  .qrs img{display:block;width:clamp(82px,8.5vw,120px);height:auto;background:#fff;padding:6px;border-radius:12px;}
+  .qrs figcaption{color:var(--lime);font-size:clamp(10px,1vw,13px);font-weight:800;margin-top:.35em;letter-spacing:.06em;text-transform:uppercase;}
 </style>
 </head>
 <body>
@@ -214,7 +264,14 @@
       <div class="meta">39 лет, г. Москва<br>(родом из Благовещенска)</div>
       <div class="brand">Парк ДОСТАВЬ-КА</div>
       <div class="niche">Ниша: виртуальная диспетчерская по подключению курьеров к сервисам Яндекс Доставки</div>
-      <div class="site">Сайт / Соц.сети: <span class="slot">site.ru</span></div>
+      <div class="socials">
+        Telegram: <a href="https://t.me/kolesnikov_rroman" target="_blank" rel="noopener">@kolesnikov_rroman</a><br>
+        Instagram: <a href="https://instagram.com/r.o.m.k.o.l.a" target="_blank" rel="noopener">@r.o.m.k.o.l.a</a>
+      </div>
+      <div class="qrs">
+        <figure><a href="https://t.me/kolesnikov_rroman" target="_blank" rel="noopener"><img src="qr_tg.png" alt="QR Telegram"></a><figcaption>Telegram</figcaption></figure>
+        <figure><a href="https://instagram.com/r.o.m.k.o.l.a" target="_blank" rel="noopener"><img src="qr_ig.png" alt="QR Instagram"></a><figcaption>Instagram</figcaption></figure>
+      </div>
     </div>
     <div class="logobadge"><img src="logo.jpg" alt="Парк ДОСТАВЬ-КА"></div>
     <div class="wordmark">GRAND —I— CARTEL</div>
