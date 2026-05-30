@@ -7,6 +7,12 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Роман Колесников — GRAND CARTEL</title>
+<meta property="og:title" content="Роман Колесников — Парк ДОСТАВЬ-КА">
+<meta property="og:description" content="AI-фабрика проектов: ДОСТАВЬ-КА, Avitoma, Громко, VROOM. Презентация для GRAND CARTEL.">
+<meta property="og:image" content="https://intrakana20-web.github.io/grand-cartel-preza/logo.jpg">
+<meta property="og:url" content="https://intrakana20-web.github.io/grand-cartel-preza/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <style>
   :root{
     --bg:#050805;
@@ -208,9 +214,9 @@
 
   /* ===== DESIGN UPGRADE: depth / glass / 3D ===== */
   .deck{perspective:1800px;perspective-origin:50% 35%;}
-  .slide.active{animation:enterDeep .65s cubic-bezier(.22,.68,.2,1);}
+  .slide.active{animation:enterDeep .75s cubic-bezier(.22,.68,.2,1);}
   @keyframes enterDeep{
-    from{opacity:0;transform:translateZ(-140px) translateY(18px) rotateX(3deg);filter:blur(4px);}
+    from{opacity:0;transform:translateZ(-240px) translateY(28px) rotateX(7deg) rotateY(-2deg);filter:blur(6px);}
     to{opacity:1;transform:none;filter:none;}
   }
   .pf .card{
@@ -227,13 +233,20 @@
     border-color:rgba(174,190,79,.35);
   }
   .wordmark{
-    background:linear-gradient(90deg,#9fb04a 0%,#dde98e 50%,#9fb04a 100%);
-    background-size:200% 100%;
-    -webkit-background-clip:text;background-clip:text;
-    color:transparent;-webkit-text-fill-color:transparent;
-    animation:shimmer 7s linear infinite;
+    background:none;
+    color:rgba(174,190,79,.12);
+    -webkit-text-fill-color:rgba(174,190,79,.12);
+    -webkit-text-stroke:1.5px rgba(220,233,138,.95);
+    text-shadow:
+      0 1px 0 rgba(174,190,79,.55),
+      0 2px 0 rgba(150,170,65,.5),
+      0 3px 0 rgba(130,150,55,.45),
+      0 4px 0 rgba(110,130,48,.4),
+      0 5px 0 rgba(90,110,42,.35),
+      0 6px 12px rgba(0,0,0,.55),
+      0 14px 36px rgba(174,190,79,.15);
+    filter:drop-shadow(0 4px 12px rgba(174,190,79,.18));
   }
-  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
   @keyframes floaty{0%,100%{transform:translateY(-58%)}50%{transform:translateY(-62%)}}
   .logobadge{animation:floaty 6s ease-in-out infinite;transition:box-shadow .6s ease;}
   .logobadge:hover{box-shadow:0 30px 90px rgba(255,140,0,.22);}
@@ -255,6 +268,57 @@
   .qrs a:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 14px 30px rgba(174,190,79,.25);}
   .qrs img{display:block;width:clamp(82px,8.5vw,120px);height:auto;background:#fff;padding:6px;border-radius:12px;}
   .qrs figcaption{color:var(--lime);font-size:clamp(10px,1vw,13px);font-weight:800;margin-top:.35em;letter-spacing:.06em;text-transform:uppercase;}
+
+  /* ===== DESIGN UPGRADE 2: title rightstack + glass tiles + mobile ===== */
+  .rightstack{
+    position:absolute;right:5vw;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:1.4em;
+    width:min(40vw,560px);z-index:2;
+  }
+  .rightstack .qrs{margin-top:0;justify-content:center;}
+  .rightstack .qrs img{width:clamp(120px,11.5vw,180px);}
+  .rightstack .logobadge{
+    position:static;transform:none;width:100%;
+    animation:floatyInline 6s ease-in-out infinite;
+    box-shadow:0 18px 60px rgba(255,140,0,.18), 0 0 90px rgba(255,140,0,.10);
+  }
+  @keyframes floatyInline{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  .grid .item{
+    background:linear-gradient(160deg,rgba(174,190,79,.07),rgba(255,255,255,.02) 60%);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:10px;padding:.55em .85em;
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    box-shadow:0 6px 18px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+    transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  }
+  .grid .item:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08);border-color:rgba(174,190,79,.25);}
+
+  h2.head{text-shadow:0 3px 14px rgba(0,0,0,.5);}
+  h1.title{text-shadow:0 4px 18px rgba(0,0,0,.55);}
+
+  /* Mobile nav buttons */
+  .mnav{
+    display:none;position:fixed;bottom:18px;width:54px;height:54px;border-radius:50%;
+    border:1px solid rgba(174,190,79,.45);
+    background:rgba(0,0,0,.55);color:var(--lime);
+    font-size:30px;font-weight:700;line-height:1;
+    z-index:30;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    cursor:pointer;align-items:center;justify-content:center;padding:0 0 4px 0;
+  }
+  .mnav.prev{left:14px;} .mnav.next{right:14px;}
+  .mnav:active{transform:scale(.94);background:rgba(174,190,79,.2);}
+
+  @media (max-width:1000px){
+    .rightstack{position:static;transform:none;width:100%;margin-top:1.6em;}
+    .rightstack .qrs img{width:clamp(110px,28vw,160px);}
+    .mnav{display:flex;}
+    .navbtn{display:none;}
+    .counter{left:50%;right:auto;transform:translateX(-50%);font-size:14px;color:var(--lime);font-weight:700;bottom:30px;}
+    .hint{display:none;}
+  }
 </style>
 </head>
 <body>
@@ -271,12 +335,14 @@
         Telegram: <a href="https://t.me/kolesnikov_rroman" target="_blank" rel="noopener">@kolesnikov_rroman</a><br>
         Instagram: <a href="https://instagram.com/r.o.m.k.o.l.a" target="_blank" rel="noopener">@r.o.m.k.o.l.a</a>
       </div>
+    </div>
+    <div class="rightstack">
       <div class="qrs">
         <figure><a href="https://t.me/kolesnikov_rroman" target="_blank" rel="noopener"><img src="qr_tg.png" alt="QR Telegram"></a><figcaption>Telegram</figcaption></figure>
         <figure><a href="https://instagram.com/r.o.m.k.o.l.a" target="_blank" rel="noopener"><img src="qr_ig.png" alt="QR Instagram"></a><figcaption>Instagram</figcaption></figure>
       </div>
+      <div class="logobadge"><img src="logo.jpg" alt="Парк ДОСТАВЬ-КА"></div>
     </div>
-    <div class="logobadge"><img src="logo.jpg" alt="Парк ДОСТАВЬ-КА"></div>
     <div class="wordmark">GRAND —I— CARTEL</div>
   </section>
 
@@ -581,6 +647,8 @@
 
   <button class="navbtn left" id="prevZone" aria-label="prev"></button>
   <button class="navbtn right" id="nextZone" aria-label="next"></button>
+  <button class="mnav prev" id="mPrev" aria-label="prev slide">‹</button>
+  <button class="mnav next" id="mNext" aria-label="next slide">›</button>
   <div class="counter" id="counter">1</div>
   <div class="hint">← → пробел · F — на весь экран</div>
 </div>
@@ -606,6 +674,19 @@
   });
   document.getElementById('nextZone').onclick=next;
   document.getElementById('prevZone').onclick=prev;
+  const mP=document.getElementById('mPrev'),mN=document.getElementById('mNext');
+  if(mP)mP.onclick=prev; if(mN)mN.onclick=next;
+  let ts=null;
+  document.addEventListener('touchstart',e=>{const t=e.changedTouches[0];ts={x:t.screenX,y:t.screenY,t:Date.now()};},{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(!ts)return;
+    const t=e.changedTouches[0],dx=t.screenX-ts.x,dy=t.screenY-ts.y;
+    const dt=Date.now()-ts.t;
+    if(dt<700 && Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.2){
+      if(dx<0)next(); else prev();
+    }
+    ts=null;
+  },{passive:true});
   show(0);
 </script>
 </body>
